@@ -9,4 +9,32 @@
 <div>
     <h1>Welcome to ChatRoom, {{username}}!</h1>
 </div>
+<ul id="message_list"></ul>
+<input id="message" type="text" name="message" placeholder="Enter your message...">
+<input id="send_message" type="button" value="Send">
+
+<script type="text/javascript">
+    socket = io();
+    msg_input = document.getElementById('message');
+    document.getElementById('send_message').onclick = send_message;
+    msg_input.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            send_message()
+        }
+    });
+    function send_message() {
+        socket.emit('message_sent', msg_input.value)
+        msg_input.value = ''
+    };
+
+    function show_message(message){
+        var li = document.createElement('li');
+        li.innerHTML = message
+        msg_list = document.getElementById('message_list');
+        msg_list.appendChild(li)
+    }
+
+    socket.on('recieve_message', (sender, message) => show_message(`${sender}: ${message}`))
+    socket.on('user_joined', (username) => show_message(`${username} has joined the room.`))
+</script>
 {% endblock %}
