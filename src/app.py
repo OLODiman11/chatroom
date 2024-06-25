@@ -1,11 +1,11 @@
 import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
-app.permanent_session_lifetime = datetime.timedelta(seconds=5)
+app.permanent_session_lifetime = datetime.timedelta(minutes=30)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -24,6 +24,22 @@ def room():
     if 'username' not in session:
         return redirect(url_for('index'))
     return render_template('room.html', username=session['username'])
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+
+@socketio.on('message_sent')
+def on_message_sent(message):
+    emit('recieve_message', (session['username'], message), broadcast=True)
+
+
+@socketio.on('leave_room')
+def on_leave_room():
+    emit('user_left', (session['username']), broadcast=True)
 
 
 if __name__ == '__main__':
