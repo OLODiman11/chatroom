@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
-app.permanent_session_lifetime = datetime.timedelta(seconds=5)
+app.permanent_session_lifetime = datetime.timedelta(minutes=30)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
