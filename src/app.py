@@ -26,9 +26,21 @@ def room():
     return render_template('room.html', username=session['username'])
 
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+
 @socketio.on('message_sent')
 def on_message_sent(message):
     emit('recieve_message', (session['username'], message), broadcast=True)
+
+
+@socketio.on('leave_room')
+def on_leave_room():
+    emit('user_left', (session['username']), broadcast=True)
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
