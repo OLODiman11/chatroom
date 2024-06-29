@@ -14,7 +14,7 @@ app.permanent_session_lifetime = datetime.timedelta(minutes=30)
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender = db.Column(db.String, nullable=False)
-    message = db.Column(db.String)
+    text = db.Column(db.String)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -24,6 +24,7 @@ def index():
     if request.method == 'POST':
         session.permanent = True
         session['username'] = request.form['username']
+        add_message('System', f'{session["username"]} has joined the room.')
         socketio.emit('user_joined', session['username'])
         return redirect(url_for('room'))
     return render_template('index.html')
@@ -33,7 +34,8 @@ def index():
 def room():
     if 'username' not in session:
         return redirect(url_for('index'))
-    return render_template('room.html', username=session['username'])
+    messages = db.session.execute(db.select(Message)).scalars()
+    return render_template('room.html', username=session['username'], messages=messages)
 
 
 @app.route('/logout')
@@ -44,12 +46,19 @@ def logout():
 
 @socketio.on('message_sent')
 def on_message_sent(message):
+    add_message(session['username'], message)
     emit('recieve_message', (session['username'], message), broadcast=True)
 
 
 @socketio.on('leave_room')
 def on_leave_room():
+    add_message('System', f'{session["username"]} has left the room.')
     emit('user_left', (session['username']), broadcast=True)
+
+
+def add_message(sender, text):
+    db.session.add(Message(sender=sender, text=text))
+    db.session.commit()
 
 
 if __name__ == '__main__':
