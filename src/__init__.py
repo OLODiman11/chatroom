@@ -1,8 +1,12 @@
 import os
+import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
 
 db = SQLAlchemy()
+socketio = SocketIO()
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -21,10 +25,23 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    app.permanent_session_lifetime = datetime.timedelta(minutes=30)
+
     @app.route('/test')
     def test():
         return 'Success!'
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
+
+    socketio.init_app(app)
+
+    from . import auth
+    app.register_blueprint(auth.bp)
+
+    from . import chat
+    app.register_blueprint(chat.bp)
 
     return app
+
