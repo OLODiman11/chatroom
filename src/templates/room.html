@@ -11,25 +11,29 @@
 </div>
 <ul id="message_list">
     {% for message in messages %}
-        <li>{{message["sender"]}}: {{message["text"]}}</li>
+        {% if message["sender"] == "System"%}
+            <li>{{message["text"]}}</li>
+        {% else %}
+            <li>{{message["sender"]}}: {{message["text"]}}</li>
+        {% endif %}
     {% endfor %}
 </ul>
 <input id="message" type="text" name="message" placeholder="Enter your message...">
 <input id="send_message" type="button" value="Send">
-<input id="leave" type="button" value="Leave">
+<a href="\logout">Leave</a>
 
 <script type="text/javascript">
     socket = io();
     msg_input = document.getElementById('message');
     document.getElementById('send_message').onclick = send_message;
-    document.getElementById('leave').onclick = leave_room;
     msg_input.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             send_message()
         }
     });
+
     function send_message() {
-        socket.emit('message_sent', msg_input.value)
+        socket.emit('send_message', msg_input.value)
         msg_input.value = ''
     };
 
@@ -40,13 +44,7 @@
         msg_list.appendChild(li)
     }
 
-    function leave_room() {
-        socket.emit('leave_room')
-        window.location.href = '/logout'
-    };
-
-    socket.on('recieve_message', (sender, message) => show_message(`${sender}: ${message}`))
-    socket.on('user_joined', (username) => show_message(`${username} has joined the room.`))
-    socket.on('user_left', (username) => show_message(`${username} has left the room.`))
+    socket.on('system_message', (text) => show_message(`${text}`))
+    socket.on('user_message', (sender, text) => show_message(`${sender}: ${text}`))
 </script>
 {% endblock %}
