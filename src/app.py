@@ -1,11 +1,21 @@
 import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chatroom.db'
 socketio = SocketIO(app)
 app.permanent_session_lifetime = datetime.timedelta(minutes=30)
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.String, nullable=False)
+    message = db.Column(db.String)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -43,4 +53,5 @@ def on_leave_room():
 
 
 if __name__ == '__main__':
+    db.init_app(app)
     socketio.run(app, debug=True)
