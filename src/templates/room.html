@@ -9,7 +9,11 @@
 <div>
     <h1>Welcome to ChatRoom, {{username}}!</h1>
 </div>
-<ul id="message_list"></ul>
+<ul id="message_list">
+    {% for message in messages %}
+        <li>{{message["sender"]}}: {{message["text"]}}</li>
+    {% endfor %}
+</ul>
 <input id="message" type="text" name="message" placeholder="Enter your message...">
 <input id="send_message" type="button" value="Send">
 <input id="leave" type="button" value="Leave">
