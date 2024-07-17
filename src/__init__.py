@@ -32,16 +32,15 @@ def create_app(test_config=None):
         return 'Success!'
 
     db.init_app(app)
+    socketio.init_app(app)
+
     with app.app_context():
         db.create_all()
 
-    socketio.init_app(app)
+        from . import auth
+        app.register_blueprint(auth.bp)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
-
-    from . import chat
-    app.register_blueprint(chat.bp)
+        from . import chat
+        app.register_blueprint(chat.bp)
 
     return app
-
