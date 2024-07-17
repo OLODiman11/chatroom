@@ -35,6 +35,7 @@ def create_app(test_config=None):
     socketio.init_app(app)
 
     with app.app_context():
+        from . import models
         db.create_all()
 
         from . import auth
