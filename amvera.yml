@@ -1,0 +1,11 @@
+meta:
+  environment: python
+  toolchain:
+    name: pip
+    version: "3.11"
+build:
+  requirementsPath: requirements.txt
+run:
+  persistenceMount: /instance
+  containerPort: "80"
+  command: gunicorn --bind 0.0.0.0:80 chatroom:create_app()
