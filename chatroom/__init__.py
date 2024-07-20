@@ -17,7 +17,10 @@ def try_create_folder(path):
 
 
 def create_app(config=None):
-    app = Flask(__name__, instance_relative_config=True)
+    instance_path = os.path.abspath('instance')
+    if os.environ.get("FLASK_ENV", "development") == "production":
+        instance_path = os.path.abspath('../data')
+    app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
 
     app.config.from_pyfile('config.py', silent=True)
     if config:
@@ -30,7 +33,6 @@ def create_app(config=None):
         return 'Success!'
 
     db.init_app(app)
-    socketio.init_app(app)
 
     with app.app_context():
         from . import models
@@ -41,5 +43,7 @@ def create_app(config=None):
 
         from . import chat
         app.register_blueprint(chat.bp)
+    
+    socketio.init_app(app)
 
     return app
