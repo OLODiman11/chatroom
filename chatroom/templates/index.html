@@ -6,9 +6,16 @@
 {% endblock %}
 
 {% block body %}
-<div>
-    <form method="post">
-        <input type="text" name="username" placeholder="Username...">
-    </form>
+<div class="container vh-100">
+    <div class="row h-100 align-items-center justify-content-center">
+        <div class="col-8 col-md-6 col-lg-4 position-relative">
+            <h1 class="position-absolute text-center w-100 bottom-90px">ChutUPP</h1>
+            <label for="usernameInput" class="form-label">Username</label>
+            <form method="post" class="input-group mb-3">
+                <input type="text" name="username" class="form-control" id="usernameInput">
+                <input type="submit" value="Join" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
