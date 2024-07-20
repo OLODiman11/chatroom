@@ -6,25 +6,30 @@
 {% endblock %}
 
 {% block body %}
-<div>
-    <h1>Welcome to ChatRoom, {{username}}!</h1>
+<div class="container d-flex flex-column vh-100 align-items-center">
+    <div class="mw-md w-100 position-relative border rounded-top-3 p-2 text-center">
+        <h3>ChutUPP</h3>
+        <div class="text-secondary">{{username}}</div>
+        <a class="position-absolute top-0 end-0 btn btn-outline-danger m-2" href="\logout">Leave</a>
+    </div>
+    <div class="mw-md w-100 overflow-auto border p-2 hide-scrollbar" id="message_list"></div>
+    <div class="mw-md w-100 border rounded-bottom-3 p-2">
+        <div class="input-group">
+            <input class="form-control" id="message" type="text" name="message" placeholder="Enter your message...">
+            <input class="btn btn-primary" id="send_message" type="button" value="Send">
+        </div>
+    </div>
 </div>
-<ul id="message_list">
-    {% for message in messages %}
-        {% if message["sender"] == "System"%}
-            <li>{{message["text"]}}</li>
-        {% else %}
-            <li>{{message["sender"]}}: {{message["text"]}}</li>
-        {% endif %}
-    {% endfor %}
-</ul>
-<input id="message" type="text" name="message" placeholder="Enter your message...">
-<input id="send_message" type="button" value="Send">
-<a href="\logout">Leave</a>
 
 <script type="text/javascript">
-    socket = io();
-    msg_input = document.getElementById('message');
+    var socket = io();
+    var last_msg_by = 'System';
+    var username = '{{ username }}';
+    var msgs = {{ messages|tojson|safe }};
+    var msg_input = document.getElementById('message');
+    var msg_list = document.getElementById('message_list');
+    
+    document.addEventListener("DOMContentLoaded", on_content_loaded);
     document.getElementById('send_message').onclick = send_message;
     msg_input.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
@@ -32,19 +37,56 @@
         }
     });
 
+    function on_content_loaded(){
+        populate_message_list()
+        scroll_to_bottom()
+    }
+
+    function populate_message_list(){
+        msgs.forEach(m => {
+            msg_list.append(...create_message_divs(m))
+        })
+    }
+
+    function create_message_divs(message){
+        let msg_divs = []
+        let sender = message['sender']
+        let class_list = []
+        if(sender == 'System'){
+            class_list.push('text-center', 'font-secondary-1')
+        }else{
+            if(sender == username)
+                class_list.push('text-end')
+            if(sender != last_msg_by)
+                msg_divs.push(create_div(class_list.concat('font-secondary-2'), sender))
+        }
+        last_msg_by = sender
+        msg_divs.push(create_div(class_list, message['text']))
+        return msg_divs
+    }
+
+    function create_div(class_list, innerHTML){
+        let div = document.createElement('div')
+        div.classList.add(...class_list)
+        div.innerHTML = innerHTML
+        return div
+    }
+
+    function scroll_to_bottom() {
+        msg_list.scrollTo(0, msg_list.scrollHeight)
+    }
+
     function send_message() {
         socket.emit('send_message', msg_input.value)
         msg_input.value = ''
     };
 
     function show_message(message){
-        var li = document.createElement('li');
-        li.innerHTML = message
-        msg_list = document.getElementById('message_list');
-        msg_list.appendChild(li)
+        msg_list.append(...create_message_divs(message))
+        scroll_to_bottom()
     }
 
-    socket.on('system_message', (text) => show_message(`${text}`))
-    socket.on('user_message', (sender, text) => show_message(`${sender}: ${text}`))
+    socket.on('system_message', (text) => show_message({'sender': 'System', 'text': text}))
+    socket.on('user_message', (sender, text) => show_message({'sender': sender, 'text': text}))
 </script>
 {% endblock %}
