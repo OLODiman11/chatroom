@@ -1,3 +1,35 @@
 .bottom-90px {
     bottom: 90px !important;
 }
+
+.rounded-top-3 {
+    border-top-left-radius: var(--bs-border-radius-lg) !important;
+    border-top-right-radius: var(--bs-border-radius-lg) !important;
+}
+
+.rounded-bottom-3 {
+    border-bottom-left-radius: var(--bs-border-radius-lg) !important;
+    border-bottom-right-radius: var(--bs-border-radius-lg) !important;
+}
+
+.font-secondary-1 {
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.font-secondary-2 {
+    font-size: 0.7rem;
+    color: grey;
+}
+
+.mw-md {
+    max-width: 768px;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
