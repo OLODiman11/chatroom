@@ -1,0 +1,17 @@
+[project]
+name = "chatroom"
+version = "0.1.0"
+authors = [
+  { name="OLODiman11", email="olodiman11@mail.ru" },
+]
+description = "Simple chat app using Flask and SocketIO."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/OLODiman11/chatroom"
