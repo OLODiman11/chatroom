@@ -23,3 +23,5 @@ Simple chat app using Flask and SocketIO.
 - Room owner/Admin can ban/unban users
 - To join a room user has to be logged in
 - When logged in, user can see a list of all the rooms they`ve joinned
+
+![image](https://github.com/user-attachments/assets/a57f4eda-121d-476b-8198-5824744a1e59)
