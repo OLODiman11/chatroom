@@ -15,3 +15,11 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/OLODiman11/chatroom"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "chatroom"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["chatroom"]
