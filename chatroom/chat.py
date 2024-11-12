@@ -11,6 +11,7 @@ def room():
     if 'username' not in session:
         return redirect(url_for('auth.index'))
     messages = db.session.execute(db.select(Message)).scalars()
+    messages = [{'sender': m.sender, 'text': m.text} for m in messages]
     return render_template('room.html', username=session['username'], messages=messages)
 
 
