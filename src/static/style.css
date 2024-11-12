@@ -1,0 +1,31 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.join-container {
+    position: fixed;
+    inset: 0px;
+    width: 12rem;
+    height: 5rem;
+    max-width: 100vw;
+    max-height: 100dvh;
+    margin: auto;
+}
+
+.max-width {
+    margin: 0;
+    width: 100%;
+}
+
+.messages {
+    list-style-type: none;
+}
+
+.system-msg {
+    color: gray;
+    font-size: small;
+}
+
+.own-msg {
+    color: forestgreen;
+}
